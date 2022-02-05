@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&display=swap');
+*{
+    font-family: 'Poiret One', cursive;
+}
+#head1{
+    color: blue;
+}
+#para1{
+    color: darkgreen;
+}
+#para:hover{
+    color: darkseagreen;
+}
+#prrr{
+    color: dodgerblue;
+}
