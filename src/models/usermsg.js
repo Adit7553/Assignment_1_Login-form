@@ -7,21 +7,16 @@ const userSchema = mongoose.Schema({
         type:String,
         required:true,
         validate(value){
-            if(!validator.isemail(value)){
+            if(!validator.isEmail(value)){
                 throw new Error("invalid email id")
             }
         }
     },
     password:{
-        type:String,
-        required:true,
-        validate(value){
-            if(!validator.ispassword(value)){
-                throw new Error("invalid password")
-            }
-        }
+        type: String,
+        required:true
     }
-})
+});
 
 //Now we create a collection
 
