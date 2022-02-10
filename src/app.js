@@ -1,6 +1,7 @@
 const express = require("express");
 require("./db/conn")
 const User = require("./models/usermsg")
+const newUser = require("./models/regmsg")
 const path = require("path");
 const hbs = require("hbs");
 const async = require("hbs/lib/async");
@@ -41,16 +42,45 @@ app.get("/contact", (req,res)=>{
 app.get("/registration", (req,res)=>{
     res.render('registration')
 })
- app.get("/register", (req,res)=>{
-     res.render('register')
+app.get("/error", (req,res)=>{
+    res.render('error')
 })
-app.post("/", async(req,res)=>{
+ app.get("/signup", (req,res)=>{
+   res.render('signup')
+})
+app.post("/", async (req,res)=>{
     try {
         const userData = new User(req.body);
       await userData.save();
         res.status(201).render('register');
     } catch (error) {
-        res.status(501).send(`error is ${error}`)
+        res.status(501).render('error')
+    }
+})
+app.post("/newuse", async (req,res)=>{
+    try {
+        const password = req.body.password;
+        const cpassword = req.body.cpassword;
+         
+         if(password === cpassword){
+
+            const registerdUser = new newUser({
+               name : req.body.name,
+               mobile : req.body.mobile,
+               password : req.body.password,
+               cpassword : req.body.cpassword
+               
+            })
+            const regsuser = await registerdUser.save();
+            res.status(200).render("newuse")
+         }else{
+             res.send("password are not matching")
+         }
+        // const regData = new newUser(req.body);
+        // await regData.save();
+        // res.status(200).render('newuse');
+    } catch (error) {
+        res.status(405).render('error')
     }
 })
 
