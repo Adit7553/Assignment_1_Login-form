@@ -1,16 +1,18 @@
 const mongoose = require("mongoose");
 const validator  = require("validator");
+const bcrypt = require("bcryptjs");
+const async = require("hbs/lib/async");
 
 //we define user schema and validation
 const userSchema = mongoose.Schema({
     email:{
         type:String,
-        required:true
-        // validate(value){
-        //     if(!validator.isEmail(value)){
-        //         throw new Error("invalid email id")
-        //     }
-        // }
+        required:true,
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("invalid email id")
+            }
+        }
     },
     password:{
         type: String,
@@ -18,24 +20,15 @@ const userSchema = mongoose.Schema({
     }
 });
 
-// const newuserSchema = mongoose.Schema({
-//     name : {
-//         type: String,
-//         required: true
-//     },
-//     mobile :{
-//         type : String,
-//         required: false
-//     },
-//     password : {
-//         type : String,
-//         required :true
-//     },
-//     cpassword : {
-//         type: String,
-//         requiredPaths: true
-//     }
-// })
+userSchema.pre("save", async function(next){
+
+    if(this.isModified("password")){
+        this.password = await bcrypt.hash(this.password, 10);
+    }
+    
+    next();
+});
+
 
 //Now we create a collection
 

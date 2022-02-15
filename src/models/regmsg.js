@@ -1,4 +1,6 @@
+const async = require("hbs/lib/async");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 
 const newuserSchema = mongoose.Schema({
@@ -18,6 +20,18 @@ const newuserSchema = mongoose.Schema({
         type: String,
         requiredPaths: true
     }
+})
+
+//hash password for security
+
+newuserSchema.pre("save", async function(next){
+
+    if(this.isModified("password")){
+        this.password = await bcrypt.hash(this.password, 10);
+        this.cpassword = undefined;
+    }
+    
+    next();
 })
 
 //Now we create a collection

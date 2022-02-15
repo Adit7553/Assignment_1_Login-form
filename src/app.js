@@ -4,8 +4,6 @@ const User = require("./models/usermsg")
 const newUser = require("./models/regmsg")
 const path = require("path");
 const hbs = require("hbs");
-const async = require("hbs/lib/async");
-const bodyparser = require("body-parser");
 const app = express();
 
 const PORT = process.env.PORT || 9000
@@ -76,9 +74,6 @@ app.post("/newuse", async (req,res)=>{
          }else{
              res.send("password are not matching")
          }
-        // const regData = new newUser(req.body);
-        // await regData.save();
-        // res.status(200).render('newuse');
     } catch (error) {
         res.status(405).render('error')
     }
