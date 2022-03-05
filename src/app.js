@@ -3,8 +3,9 @@ require("./db/conn")
 const User = require("./models/usermsg")
 const newUser = require("./models/regmsg")
 const path = require("path");
-const hbs = require("hbs");
-const app = express();
+const bcrypt = require("bcrypt")
+const hbs = require("hbs")
+const app = express()
 
 const PORT = process.env.PORT || 9000
 
@@ -37,43 +38,43 @@ app.get("/about", (req,res)=>{
 app.get("/contact", (req,res)=>{
     res.render('contact')
 })
-app.get("/registration", (req,res)=>{
-    res.render('registration')
-})
 app.get("/error", (req,res)=>{
     res.render('error')
 })
  app.get("/signup", (req,res)=>{
    res.render('signup')
 })
+app.get("/register", (req,res)=>{
+    res.render('register')
+ })
+
+
 app.post("/", async (req,res)=>{
     try {
-        const userData = new User(req.body);
-      await userData.save();
-        res.status(201).render('register');
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        const email = req.body.email
+        const password = hashedPassword
+
+        const useremail = await newUser.findOne({email:email})
+             if(await bcrypt.compare(req.body.password, useremail.password)) {
+                res.render("register")
+             } else{
+                res.status(504).send("invalid password or email")
+             }
     } catch (error) {
         res.status(501).render('error')
     }
 })
 app.post("/newuse", async (req,res)=>{
     try {
-        const password = req.body.password;
-        const cpassword = req.body.cpassword;
-         
-         if(password === cpassword){
-
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
             const registerdUser = new newUser({
-               name : req.body.name,
+               email : req.body.email,
                mobile : req.body.mobile,
-               password : req.body.password,
-               cpassword : req.body.cpassword
-               
+               password : hashedPassword 
             })
             const regsuser = await registerdUser.save();
             res.status(200).render("newuse")
-         }else{
-             res.send("password are not matching")
-         }
     } catch (error) {
         res.status(405).render('error')
     }
